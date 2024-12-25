@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steam Games</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'css/style.css' %}"> {% endcomment %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1b2838;
+            color: #c7d5e0;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .game-card {
+            background-color: #2a475e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        .game-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .game-info {
+            padding: 15px;
+        }
+        .game-info h3 {
+            margin: 0;
+            font-size: 20px;
+            color: #fff;
+        }
+        .game-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .game-info .score {
+            font-size: 16px;
+            color: #66c0f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Steam Games</h1>
+    <div class="game-container">
+        {% for game, details in response.items %}
+        <div class="game-card">
+            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/{{ details.appid }}/header.jpg" alt="{{ game }}">
+            <div class="game-info">
+                <h3>{{ game }}</h3>
+                <p class="score">appid: {{ details.appid }}</p>
+                <p class="score">relase date: {{ details.game_full_info.release_date }}</p>
+                <p class="score">link: <a href="https://store.steampowered.com/app/{{ details.appid }}">click me</a></p>
+                <p class="score">User hour: {{ details.playtime_hours }}h</p>
+            </div>
+        </div>
+        {% endfor %}
+        {% for game, details in errors_game.items %}
+        <div class="game-card">
+            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/{{ details.appid }}/header.jpg" alt="{{ game }}">
+            <div class="game-info">
+                <h3>{{ game }}</h3>
+                <p class="score">appid: {{ details.appid }}</p>
+                <p class="score">relase date: {{ details.game_full_info.release_date }}</p>
+                <p class="score">link: <a href="https://store.steampowered.com/app/{{ details.appid }}">click me</a></p>
+                <p class="score">User hour: {{ details.playtime_hours }}h</p>
+            </div>
+        </div>
+        {% endfor %}        
+    </div>
+</body>
+</html>
