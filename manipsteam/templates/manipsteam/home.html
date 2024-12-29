@@ -50,32 +50,18 @@
     </style>
 </head>
 <body>
-    <h1>My Steam Games</h1>
+    <h1>My Steam Games {% if games_count %} {{games_count}} {% endif %} </h1>
     <div class="game-container">
-        {% for game, details in response.items %}
-            {% if 'Error' in details.appid %}
-            <div class="game-card">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/{{ game }}/header.jpg" alt="{{ game }}">
-                <div class="game-info">
-                    <h3>{{ details.appid }}</h3>
-                    <p class="score">appid: {{ game }}</p>
-                    <p class="score">relase date: {{ details.game_full_info.release_date }}</p>
-                    <p class="score">link: <a href="https://store.steampowered.com/app/{{ game }}">click me</a></p>
-                    <p class="score">User hour: {{ details.playtime_hours }}h</p>
-                </div>
+        {% for game in games %}
+        <div class="game-card">
+            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/{{ game.appid }}/header.jpg" alt="{{ game }}">
+            <div class="game-info">
+                <h3>{{ game.name }}</h3>
+                <p class="score">appid: {{ game.appid }}</p>
+                <p class="score">link: <a href="https://store.steampowered.com/app/{{ game.appid }}">click me</a></p>
+                <p class="score">User hour: {{ game.playtime_forever }}h</p>
             </div>
-            {% else %}
-            <div class="game-card">
-                <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/{{ details.appid }}/header.jpg" alt="{{ game }}">
-                <div class="game-info">
-                    <h3>{{ game }}</h3>
-                    <p class="score">appid: {{ details.appid }}</p>
-                    <p class="score">relase date: {{ details.game_full_info.release_date }}</p>
-                    <p class="score">link: <a href="https://store.steampowered.com/app/{{ details.appid }}">click me</a></p>
-                    <p class="score">User hour: {{ details.playtime_hours }}h</p>
-                </div>
-            </div>
-            {% endif %}
+        </div>        
         {% endfor %}
     </div>
 </body>
