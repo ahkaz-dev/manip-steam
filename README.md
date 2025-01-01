@@ -47,6 +47,10 @@ To run this project, you will need to add the following environment variables to
 - To find your Steam ID, visit the [following link](https://store.steampowered.com/account/)
 
 ## Running the App
+Use for local data storage:
+```bash
+py manage.py migrate
+```
 
 Run the main script:
 ```bash
