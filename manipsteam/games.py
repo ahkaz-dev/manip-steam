@@ -32,7 +32,8 @@ for result in user_game_data['response']['games']:
         "name": result['name'],
         "playtime_forever": round(result['playtime_forever'] / 60)
     })
-    Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=result['playtime_forever'], status='Not started')
+    if 'manipsteam_game' in connection.introspection.table_names():
+        Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=result['playtime_forever'], status='Not started')
     
 if 'manipsteam_game' in connection.introspection.table_names():
     if Game.objects.count() > games_count:
