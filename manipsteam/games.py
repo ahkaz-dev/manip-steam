@@ -1,7 +1,8 @@
 import requests
 import os
 from .models import Game
-
+from django.db import connection
+  
 api = 'https://api.steampowered.com/ISteamApps/GetAppList/v2/'
 id = os.getenv('id_key')
 api_key = os.getenv('api_key')
@@ -31,8 +32,18 @@ for result in user_game_data['response']['games']:
         "name": result['name'],
         "playtime_forever": round(result['playtime_forever'] / 60)
     })
-
-if (Game.objects.count() > games_count):
-    Game.objects.all().delete()
-    for result in games_owned:
-        Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=result['playtime_forever'], status='Not started')
+    Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=result['playtime_forever'], status='Not started')
+    
+if 'manipsteam_game' in connection.introspection.table_names():
+    if Game.objects.count() > games_count:
+        Game.objects.all().delete()
+        
+        for result in games_owned:
+            Game.objects.create(
+                appid=result['appid'], 
+                name=result['name'], 
+                playtime_forever=result['playtime_forever'], 
+                status='Not started'
+            )
+else:
+    print("Table 'manipsteam_game' not found!")
