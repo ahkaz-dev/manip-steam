@@ -5,4 +5,5 @@ from manipsteam import views
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('game/<int:game_appid>/', views.game_info, name='game_info'),
 ]
