@@ -14,7 +14,7 @@ class Game(models.Model):
     status = models.CharField(max_length=55, choices=STATUS_CHOICE, verbose_name='Gameplay status', default='Not started')
     
     def __str__(self):
-        return self.get_status_display();
+        return self.name;
     
     class Meta:
         verbose_name = 'Game'
