@@ -21,7 +21,8 @@ def get_score(id):
     score = data['total_positive']/data['total_reviews']
     return score
 
-user_url = f'https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={api_key}&steamid={id}&include_appinfo=true&include_extended_appinfo=true&include_played_free_games=true'
+# Add include_played_free_games=true if you want to see your free games
+user_url = f'https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={api_key}&steamid={id}&include_appinfo=true&include_extended_appinfo=true'
 user_game_data = requests.get(url=user_url).json()
 
 games_owned = []
@@ -33,18 +34,12 @@ for result in user_game_data['response']['games']:
         "playtime_forever": round(result['playtime_forever'] / 60)
     })
     if 'manipsteam_game' in connection.introspection.table_names():
-        Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=result['playtime_forever'], status='Not started')
+        Game.objects.create(appid=result['appid'], name=result['name'], playtime_forever=round(result['playtime_forever'] / 60))
     
 if 'manipsteam_game' in connection.introspection.table_names():
     if Game.objects.count() > games_count:
-        Game.objects.all().delete()
-        
-        for result in games_owned:
-            Game.objects.create(
-                appid=result['appid'], 
-                name=result['name'], 
-                playtime_forever=result['playtime_forever'], 
-                status='Not started'
-            )
+        games_to_keep = Game.objects.order_by('id')[:games_count]
+        games_to_keep_ids = games_to_keep.values_list('id', flat=True)
+        Game.objects.exclude(id__in=games_to_keep_ids).delete()
 else:
     print("Table 'manipsteam_game' not found!")
