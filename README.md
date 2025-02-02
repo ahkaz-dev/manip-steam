@@ -22,7 +22,7 @@ Activate the virtual environment:
 
 - For Windows:
     ```bash
-    .env\Scripts\activate
+    env\Scripts\activate
     ```
 - For macOS/Linux:
     ```bash
@@ -56,5 +56,26 @@ Run the main script:
 ```bash
 py manage.py runserver
 ```
+## Data storage and admin
+Use the command:
+```bash
+py manage.py createsuperuser
+```
+Following the instructions, enter your data into the console
+
+**Username**: `MyLogin` **Email address**:  `press enter for skip email`
+**Password**:  `MyPassword` **Password (again)**:  `MyPassword`
+
+You will see a message that the creation was successful
+
+## Check data
+Go to the admin page: `/admin`.
+Use the login and password that you entered for the **createsuperuser** command.
+
+Select Games, and you will see all the games associated with your account.
+You can also click on a single row to edit the data.
+
+Click on `View site` to go to the home page.
+
 ## License
 This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
