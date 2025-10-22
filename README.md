@@ -77,5 +77,14 @@ You can also click on a single row to edit the data.
 
 Click on `View site` to go to the home page.
 
+## Screens
+| Dashboard | 
+|-----------------|
+| ![Dashboard](https://raw.githubusercontent.com/ahkaz-dev/manip-steam/main/static/screens/screencapture-dashboard.png) |
+
+| Select game | 
+|-----------------|
+| ![Select game](https://raw.githubusercontent.com/ahkaz-dev/manip-steam/main/static/screens/screencapture-select-game.png) |
+
 ## License
 This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.

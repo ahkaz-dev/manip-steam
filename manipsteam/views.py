@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 # from .games import my_games_and_user_scores, games_count
-from .games import games_owned, games_count
+from .games import games_owned, games_count, data_clean
 from .models import *
 import requests
 import html
@@ -22,46 +22,52 @@ def get_screenshot_links(appid):
     return image_links
 
 def game_info(request, game_appid):
-    find_game = Game.objects.get(appid=game_appid)
-    screenshot_links = []
-    
-    try:
-        game_info = f'https://store.steampowered.com/api/appdetails?appids={game_appid}'
-        user_game_data = requests.get(url=game_info).json()
-    except:
-        pass
+    game_appid = str(game_appid)  # приведение к строке для надёжности
 
+    find_game, created = Game.objects.get_or_create(
+        appid=game_appid,
+        defaults={
+            'name': data_clean.get(int(game_appid), 'Unknown Game'),
+            'playtime_forever': 0,
+        }
+    )
+
+    try:
+        response = requests.get(f'https://store.steampowered.com/api/appdetails?appids={game_appid}')
+        user_game_data = response.json()
+    except Exception:
+        user_game_data = {}
+
+    screenshot_links = []
     if user_game_data.get(str(game_appid), {}).get('success') is False:
         screenshot_links = get_screenshot_links(game_appid)
 
     result_info = []
-    for game_id, game_info in user_game_data.items():
-        if game_info['success']:
-            data = game_info['data']
+    for game_id, info in user_game_data.items():
+        if info['success']:
+            data = info['data']
             result_info.append({
                 "short_description": data.get('short_description'),
-                "detailed_description": data.get('detailed_description'),
                 "about_the_game": data.get('about_the_game'),
-                "categorie1": data['categories'][0]['description'],
-                "categorie2": data['categories'][1]['description'],
-                "categorie3": data['categories'][2]['description'],
-                "genres": [genre['description'] for genre in data['genres']],
-                "screenshots": [screenshot['path_full'] for screenshot in data['screenshots']],
-                "release_date": data['release_date'].get('date'),
+                "genres": [g['description'] for g in data.get('genres', [])],
+                "screenshots": [s['path_full'] for s in data.get('screenshots', [])],
+                "release_date": data.get('release_date', {}).get('date'),
             })
-    
+
     if request.method == 'POST':
         rating = request.POST.get('rating')
         status = request.POST.get('status')
-        
-        review = request.POST.get('review')
-        review_clean = html.escape(review)
-        
+        review = html.escape(request.POST.get('review', ''))
+
         if rating in dict(find_game.GAMERATING_CHOICE):
             find_game.local_rating = rating
             find_game.status = status
-            find_game.local_review = review_clean
+            find_game.local_review = review
             find_game.save()
             return redirect('game_info', game_appid=game_appid)
-        
-    return render(request, 'manipsteam/game.html', {'game': find_game, 'scrns_game': screenshot_links, 'game_info': result_info})
+
+    return render(request, 'manipsteam/game.html', {
+        'game': find_game,
+        'scrns_game': screenshot_links,
+        'game_info': result_info
+    })
